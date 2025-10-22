@@ -17,11 +17,20 @@ public class GlobalExceptionHandler {
         List<String> messages = ex.getBindingResult().getFieldErrors().stream().map(FieldError::getDefaultMessage)
         .collect(Collectors.toList());
 
-        if (messages.contains("Book name is required") && messages.contains("Counterparty name is required")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book and Counterparty are required");
+       boolean missingBook = messages.contains("Book name is required");
+        boolean missingCounterparty = messages.contains("Counterparty name is required");
+
+        if (missingBook) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Book and Counterparty are required");
+        } 
+        else if (missingCounterparty) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Counterparty name is required");
         }
+
         String combinedMessage = String.join("; ", messages);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(combinedMessage);
     }
+    }
 
-}
