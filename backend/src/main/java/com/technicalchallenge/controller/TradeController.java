@@ -117,7 +117,7 @@ public class TradeController {
         logger.info("Updating trade with id: {}", id);
         try {
             if (tradeDTO.getTradeId() != null && !tradeDTO.getTradeId().equals(id)) {
-                return ResponseEntity.badRequest().body("Trade ID mismatch");
+                return ResponseEntity.badRequest().body("Trade ID in path must match Trade ID in request body");
             }
             if (tradeDTO.getTradeId() == null) {
                 tradeDTO.setTradeId(id);
