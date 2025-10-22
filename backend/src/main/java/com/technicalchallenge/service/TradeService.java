@@ -261,6 +261,7 @@ public class TradeService {
     public Trade amendTrade(Long tradeId, TradeDTO tradeDTO) {
         logger.info("Amending trade with ID: {}", tradeId);
 
+
         Optional<Trade> existingTradeOpt = getTradeById(tradeId);
         if (existingTradeOpt.isEmpty()) {
             throw new RuntimeException("Trade not found: " + tradeId);
@@ -290,6 +291,7 @@ public class TradeService {
         amendedTrade.setTradeStatus(amendedStatus);
 
         Trade savedTrade = tradeRepository.save(amendedTrade);
+        logger.debug("Amended trade saved with tradeId: {}", savedTrade.getTradeId());   
 
         // Create new trade legs and cashflows
         createTradeLegsWithCashflows(tradeDTO, savedTrade);
