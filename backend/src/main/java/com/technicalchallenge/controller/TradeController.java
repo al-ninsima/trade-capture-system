@@ -124,6 +124,13 @@ public class TradeController {
             }
             Trade amendedTrade = tradeService.amendTrade(id, tradeDTO);
             TradeDTO responseDTO = tradeMapper.toDto(amendedTrade);
+            
+            if (responseDTO.getTradeId() == null) {
+            responseDTO.setTradeId(amendedTrade.getTradeId());
+            }
+            logger.debug("Returning TradeDTO for updateTrade with tradeId={}", responseDTO.getTradeId());
+
+
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             logger.error("Error updating trade: {}", e.getMessage(), e);
