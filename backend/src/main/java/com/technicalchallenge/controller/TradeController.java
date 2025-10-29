@@ -122,19 +122,29 @@ public class TradeController {
             if (tradeDTO.getTradeId() == null) {
                 tradeDTO.setTradeId(id);
             }
+            
             Trade amendedTrade = tradeService.amendTrade(id, tradeDTO);
+            if (amendedTrade == null) {
+            logger.error("amendTrade returned null for tradeId {}", id);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Trade amendment failed: service returned null");
+}
+
             TradeDTO responseDTO = tradeMapper.toDto(amendedTrade);
+            if (responseDTO == null) {
+            logger.error("tradeMapper.toDto returned null for tradeId {}", amendedTrade.getTradeId());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Trade amendment failed: mapper returned null");
+}
             
             if (responseDTO.getTradeId() == null) {
             responseDTO.setTradeId(amendedTrade.getTradeId());
             }
-            logger.debug("Returning TradeDTO for updateTrade with tradeId={}", responseDTO.getTradeId());
-
-
+            logger.debug(" Returning TradeDTO for updateTrade with tradeId={}", responseDTO.getTradeId());
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
-            logger.error("Error updating trade: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().body("Error updating trade: " + e.getMessage());
+            logger.error("Error updating trade with id {}: {}", id, e.getMessage(), e);
+    return ResponseEntity.badRequest().body("Error updating trade: " + e.getMessage());
         }
     }
 

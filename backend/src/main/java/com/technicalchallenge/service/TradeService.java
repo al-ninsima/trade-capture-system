@@ -277,7 +277,8 @@ public class TradeService {
         // Create new version
         Trade amendedTrade = mapDTOToEntity(tradeDTO);
         amendedTrade.setTradeId(tradeId);
-        amendedTrade.setVersion(existingTrade.getVersion() + 1);
+        Integer currentVersion = existingTrade.getVersion() == null ? 0 : existingTrade.getVersion();
+        amendedTrade.setVersion(currentVersion + 1);
         amendedTrade.setActive(true);
         amendedTrade.setCreatedDate(LocalDateTime.now());
         amendedTrade.setLastTouchTimestamp(LocalDateTime.now());
@@ -358,6 +359,8 @@ public class TradeService {
     }
 
     private Trade mapDTOToEntity(TradeDTO dto) {
+    logger.debug("Mapping DTO to entity, tradeId={}", dto.getTradeId());
+
         Trade trade = new Trade();
         trade.setTradeId(dto.getTradeId());
         trade.setTradeDate(dto.getTradeDate()); // Fixed field names
