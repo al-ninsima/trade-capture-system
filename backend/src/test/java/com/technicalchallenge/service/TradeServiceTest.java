@@ -177,6 +177,9 @@ class TradeServiceTest {
         CashflowRepository mockCashflowRepo = mock(CashflowRepository.class);
         tradeService.cashflowRepository = mockCashflowRepo;
         
+        TradeLeg leg = new TradeLeg(); 
+        leg.setLegId(1L);
+        leg.setNotional(BigDecimal.valueOf(1000000));
         
 
         // When - method call is missing
