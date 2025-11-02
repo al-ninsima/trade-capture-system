@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.technicalchallenge.model.Cashflow;
 import com.technicalchallenge.model.Schedule;
 
 import java.math.BigDecimal;
@@ -193,6 +195,6 @@ class TradeServiceTest {
         tradeService.generateCashflows(leg, startDate, maturityDate);
 
         // Then - assertions are wrong/missing
-        assertEquals(1, 12); // This will always fail - candidates need to fix
+        verify (mockCashflowRepo, times(12)).save(any(Cashflow.class));
     }
 }
