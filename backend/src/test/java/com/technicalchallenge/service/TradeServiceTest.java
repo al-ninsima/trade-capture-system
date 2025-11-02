@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -172,8 +173,11 @@ class TradeServiceTest {
         // Candidates need to implement proper cashflow testing
 
         // Given - setup is incomplete
-        TradeLeg leg = new TradeLeg();
-        leg.setNotional(BigDecimal.valueOf(1000000));
+        TradeService tradeService = new TradeService();
+        CashflowRepository mockCashflowRepo = mock(CashflowRepository.class);
+        tradeService.cashflowRepository = mockCashflowRepo;
+        
+        
 
         // When - method call is missing
 
