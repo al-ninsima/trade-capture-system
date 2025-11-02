@@ -188,6 +188,9 @@ class TradeServiceTest {
         leg.setCalculationPeriodSchedule(schedule);
 
         // When - method call is missing
+        LocalDate startDate = LocalDate.of(2025, 1, 1);
+        LocalDate maturityDate = LocalDate.of(2025, 12, 31);
+        tradeService.generateCashflows(leg, startDate, maturityDate);
 
         // Then - assertions are wrong/missing
         assertEquals(1, 12); // This will always fail - candidates need to fix
