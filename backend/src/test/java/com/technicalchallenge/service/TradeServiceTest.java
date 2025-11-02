@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.technicalchallenge.model.Schedule;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -181,6 +182,10 @@ class TradeServiceTest {
         leg.setLegId(1L);
         leg.setNotional(BigDecimal.valueOf(1000000));
         
+        // Setup a monthly schedule
+        Schedule schedule = new Schedule();
+        schedule.setSchedule("1M");
+        leg.setCalculationPeriodSchedule(schedule);
 
         // When - method call is missing
 
