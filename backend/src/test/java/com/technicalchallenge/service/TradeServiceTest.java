@@ -4,10 +4,22 @@ import com.technicalchallenge.dto.TradeDTO;
 import com.technicalchallenge.dto.TradeLegDTO;
 import com.technicalchallenge.model.Trade;
 import com.technicalchallenge.model.TradeLeg;
+import com.technicalchallenge.repository.ApplicationUserRepository;
+import com.technicalchallenge.repository.BookRepository;
+import com.technicalchallenge.repository.BusinessDayConventionRepository;
 import com.technicalchallenge.repository.CashflowRepository;
+import com.technicalchallenge.repository.CounterpartyRepository;
+import com.technicalchallenge.repository.HolidayCalendarRepository;
+import com.technicalchallenge.repository.IndexRepository;
+import com.technicalchallenge.repository.LegTypeRepository;
+import com.technicalchallenge.repository.PayRecRepository;
+import com.technicalchallenge.repository.ScheduleRepository;
 import com.technicalchallenge.repository.TradeLegRepository;
 import com.technicalchallenge.repository.TradeRepository;
 import com.technicalchallenge.repository.TradeStatusRepository;
+import com.technicalchallenge.repository.TradeSubTypeRepository;
+import com.technicalchallenge.repository.TradeTypeRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.technicalchallenge.model.Book;
 import com.technicalchallenge.model.Cashflow;
 import com.technicalchallenge.model.Schedule;
 
@@ -25,6 +38,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +55,39 @@ class TradeServiceTest {
 
     @Mock
     private TradeStatusRepository tradeStatusRepository;
+
+    @Mock
+    private BookRepository bookRepository;
+
+    @Mock
+    private CounterpartyRepository counterpartyRepository;
+
+    @Mock
+    private ApplicationUserRepository applicationUserRepository;
+
+    @Mock
+    private TradeTypeRepository tradeTypeRepository;
+
+    @Mock
+    private TradeSubTypeRepository tradeSubTypeRepository;
+
+    @Mock
+    private LegTypeRepository legTypeRepository;
+
+    @Mock
+    private IndexRepository indexRepository;
+
+    @Mock
+    private HolidayCalendarRepository holidayCalendarRepository;
+
+    @Mock
+    private BusinessDayConventionRepository businessDayConventionRepository;
+
+    @Mock
+    private ScheduleRepository scheduleRepository;
+
+    @Mock
+    private PayRecRepository payRecRepository;
 
     @Mock
     private AdditionalInfoService additionalInfoService;
@@ -170,31 +217,97 @@ class TradeServiceTest {
     }
 
     // This test has a deliberate bug for candidates to find and fix
-    @Test
-    void testCashflowGeneration_MonthlySchedule() {
+   // @Test
+   // void testCashflowGeneration_MonthlySchedule() {
         // This test method is incomplete and has logical errors
         // Candidates need to implement proper cashflow testing
 
         // Given - setup is incomplete
-        TradeService tradeService = new TradeService();
-        CashflowRepository mockCashflowRepo = mock(CashflowRepository.class);
-        tradeService.cashflowRepository = mockCashflowRepo;
+       // TradeService tradeService = new TradeService();
+       // CashflowRepository mockCashflowRepo = mock(CashflowRepository.class);
+       // tradeService.cashflowRepository = mockCashflowRepo;
         
-        TradeLeg leg = new TradeLeg(); 
-        leg.setLegId(1L);
-        leg.setNotional(BigDecimal.valueOf(1000000));
+       // TradeLeg leg = new TradeLeg(); 
+       // leg.setLegId(1L);
+       // leg.setNotional(BigDecimal.valueOf(1000000));
         
         // Setup a monthly schedule
-        Schedule schedule = new Schedule();
-        schedule.setSchedule("1M");
-        leg.setCalculationPeriodSchedule(schedule);
+       // Schedule schedule = new Schedule();
+       // schedule.setSchedule("1M");
+       // leg.setCalculationPeriodSchedule(schedule);
 
         // When - method call is missing
-        LocalDate startDate = LocalDate.of(2025, 1, 1);
-        LocalDate maturityDate = LocalDate.of(2025, 12, 31);
-        tradeService.generateCashflows(leg, startDate, maturityDate);
+       // LocalDate startDate = LocalDate.of(2025, 1, 1);
+       // LocalDate maturityDate = LocalDate.of(2025, 12, 31);
+       // tradeService.generateCashflows(leg, startDate, maturityDate);
 
         // Then - assertions are wrong/missing
-        verify (mockCashflowRepo, times(12)).save(any(Cashflow.class));
-    }
+       // verify (mockCashflowRepo, times(12)).save(any(Cashflow.class));
+   // }
+@Test
+void testCashflowGeneration_MonthlySchedule() {
+    // Given
+    TradeDTO tradeDTO = new TradeDTO();
+    tradeDTO.setTradeId(100001L);
+    tradeDTO.setTradeDate(LocalDate.of(2025, 1, 1));
+    tradeDTO.setTradeStartDate(LocalDate.of(2025, 1, 1));
+    tradeDTO.setTradeMaturityDate(LocalDate.of(2025, 12, 31));
+    tradeDTO.setBookName("TestBook");
+    tradeDTO.setCounterpartyName("TestCounterparty");
+
+    // Create first leg (payer)
+    TradeLegDTO leg1 = new TradeLegDTO();
+    leg1.setNotional(BigDecimal.valueOf(1_000_000));
+    leg1.setRate(0.05);
+    leg1.setCalculationPeriodSchedule("1M"); // monthly
+    leg1.setPayReceiveFlag("Pay");
+
+    // Create second leg (receiver)
+    TradeLegDTO leg2 = new TradeLegDTO();
+    leg2.setNotional(BigDecimal.valueOf(1_000_000));
+    leg2.setRate(0.0);
+    leg2.setCalculationPeriodSchedule("1M");
+    leg2.setPayReceiveFlag("Receive");
+
+    tradeDTO.setTradeLegs(Arrays.asList(leg1, leg2));
+
+
+    when(tradeRepository.save(any(Trade.class))).thenAnswer(i -> i.getArgument(0));
+    when(tradeLegRepository.save(any(TradeLeg.class))).thenAnswer(i -> i.getArgument(0));
+    when(cashflowRepository.save(any(Cashflow.class))).thenAnswer(i -> i.getArgument(0));
+
+    when(bookRepository.findByBookName(anyString()))
+    .thenReturn(Optional.of(new com.technicalchallenge.model.Book()));
+
+    when(counterpartyRepository.findByName(anyString()))
+    .thenReturn(Optional.of(new com.technicalchallenge.model.Counterparty()));
+
+    when(tradeStatusRepository.findByTradeStatus(anyString()))
+    .thenReturn(Optional.of(new com.technicalchallenge.model.TradeStatus()));
+
+    when(scheduleRepository.findBySchedule(anyString()))
+    .thenReturn(Optional.of(new com.technicalchallenge.model.Schedule()));
+
+    when(payRecRepository.findByPayRec(anyString()))
+    .thenReturn(Optional.of(new com.technicalchallenge.model.PayRec()));
+
+
+    com.technicalchallenge.model.Schedule schedule = new com.technicalchallenge.model.Schedule();
+    schedule.setSchedule("1M");
+    when(scheduleRepository.findBySchedule(anyString())).thenReturn(Optional.of(schedule));
+
+
+    // When
+    Trade result = tradeService.createTrade(tradeDTO);
+
+    // Then
+    assertNotNull(result);
+    verify(cashflowRepository, atLeastOnce()).save(any(Cashflow.class));
+
+    // Expect 12 months of payments for each leg = 24 total saves
+    verify(cashflowRepository, times(24)).save(any(Cashflow.class));
+
+}
+
+
 }
