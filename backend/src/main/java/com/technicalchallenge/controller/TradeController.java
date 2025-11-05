@@ -105,8 +105,7 @@ public class TradeController {
 
     // paginated version of the search endpoint
     @GetMapping("/filter")
-    @Operation(
-        summary = "Paginated trade filter search",
+    @Operation(summary = "Paginated trade filter search",
         description = "Same as /search but supports paging for large trade books"
     )
     @ApiResponses(value = {
@@ -131,6 +130,23 @@ public class TradeController {
         return tradeService.searchTrades(counterparty, bookId, trader, status, fromDate, toDate, org.springframework.data.domain.PageRequest.of(page, size));
     }
  
+        
+    @GetMapping("/rsql")
+    @Operation(summary = "Advanced RSQL trade search",
+           description = "Allows power users to search trades using flexible RSQL syntax.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Search results returned successfully",
+                content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = TradeDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid RSQL query format")
+    })
+
+    public List<TradeDTO> searchTradesRsql(@RequestParam String query) {
+        logger.info("Executing RSQL trade search: {}", query);
+        return tradeService.searchTradesRsql(query);
+    }
+ 
+
 
     @PostMapping
     @Operation(summary = "Create new trade",
