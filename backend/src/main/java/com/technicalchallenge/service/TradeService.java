@@ -116,7 +116,7 @@ public class TradeService {
 
         Page<Trade> trades = tradeRepository.findAll(spec, pageable);
 
-        return trades.map(trade -> tradeMapper.toDTO(trade));
+        return trades.map(trade -> tradeMapper.toDto(trade));
 
     }
 
