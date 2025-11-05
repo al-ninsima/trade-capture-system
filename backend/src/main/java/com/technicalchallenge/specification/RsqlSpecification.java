@@ -1,4 +1,5 @@
 package com.technicalchallenge.specification;
 
-public class RsqlSpecificationBuilder {
+public class RsqlSpecification {
+
 }
