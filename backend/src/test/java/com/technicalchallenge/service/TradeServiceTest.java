@@ -304,7 +304,7 @@ void testCashflowGeneration_MonthlySchedule() {
     assertNotNull(result);
     verify(cashflowRepository, atLeastOnce()).save(any(Cashflow.class));
 
-    // Expect 12 months of payments for each leg = 22 !!!!
+    // Expect 12 months of payments for each leg = 22 !!!! (method calculates payment dares from start to maturity but excludes maturity date...11 months / leg = 22 cashflows)
     verify(cashflowRepository, times(22)).save(any(Cashflow.class));
 
 }
