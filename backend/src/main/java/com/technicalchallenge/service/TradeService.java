@@ -77,7 +77,7 @@ public class TradeService {
         return tradeRepository.findByTradeIdAndActiveTrue(tradeId);
     }
 
-// Update to support Stage 3 Enhancement 1, methods to accept search parameters using Specifications & executes dynamic queries 
+// Update to support Stage 3 Enhancement 1, methods to accept search parameters using Specifications & execute dynamic queries 
 
     public Page<TradeDTO> searchTrades(
         String counterparty,
@@ -116,7 +116,8 @@ public class TradeService {
 
         Page<Trade> trades = tradeRepository.findAll(spec, pageable);
 
-        return trades.map(tradeMapper::toDTO);
+        return trades.map(trade -> tradeMapper.toDTO(trade));
+
     }
 
     @Transactional
