@@ -2,11 +2,18 @@ package com.technicalchallenge.service;
 
 import com.technicalchallenge.dto.TradeDTO;
 import com.technicalchallenge.dto.TradeLegDTO;
+import com.technicalchallenge.mapper.TradeMapper;
 import com.technicalchallenge.model.*;
 import com.technicalchallenge.repository.*;
+import com.technicalchallenge.specification.TradeSpecification;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +63,9 @@ public class TradeService {
     private PayRecRepository payRecRepository;
     @Autowired
     private AdditionalInfoService additionalInfoService;
+    @Autowired
+    private TradeMapper tradeMapper;
+
 
     public List<Trade> getAllTrades() {
         logger.info("Retrieving all trades");
@@ -65,6 +75,48 @@ public class TradeService {
     public Optional<Trade> getTradeById(Long tradeId) {
         logger.debug("Retrieving trade by id: {}", tradeId);
         return tradeRepository.findByTradeIdAndActiveTrue(tradeId);
+    }
+
+// Update to support Stage 3 Enhancement 1, methods to accept search parameters using Specifications & executes dynamic queries 
+
+    public Page<TradeDTO> searchTrades(
+        String counterparty,
+        Long bookId,
+        String trader,
+        String status,
+        LocalDate fromDate,
+        LocalDate toDate,
+        Pageable pageable
+    ) {
+    Specification<Trade> spec = Specification.where(null);
+
+        if (counterparty != null && !counterparty.isEmpty()) {
+        spec = spec.and(TradeSpecification.counterpartyNameContains(counterparty));
+        }
+
+        if (bookId != null) {
+        spec = spec.and(TradeSpecification.hasBookId(bookId));
+        }
+
+        if (trader != null && !trader.isEmpty()) {
+        spec = spec.and(TradeSpecification.traderNameContains(trader));
+        }
+
+        if (status != null && !status.isEmpty()) {
+        spec = spec.and(TradeSpecification.hasStatus(status));
+        }
+
+        if (fromDate != null) {
+        spec = spec.and(TradeSpecification.tradeDateAfterOrEqual(fromDate));
+        }
+
+        if (toDate != null) {
+        spec = spec.and(TradeSpecification.tradeDateBeforeOrEqual(toDate));
+        }
+
+        Page<Trade> trades = tradeRepository.findAll(spec, pageable);
+
+        return trades.map(tradeMapper::toDTO);
     }
 
     @Transactional
