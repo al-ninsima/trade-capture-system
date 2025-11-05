@@ -5,6 +5,7 @@ import com.technicalchallenge.dto.TradeLegDTO;
 import com.technicalchallenge.mapper.TradeMapper;
 import com.technicalchallenge.model.*;
 import com.technicalchallenge.repository.*;
+import com.technicalchallenge.specification.RsqlSpecificationBuilder;
 import com.technicalchallenge.specification.TradeSpecification;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,14 @@ public class TradeService {
         return trades.map(trade -> tradeMapper.toDto(trade));
 
     }
+    //Stage 3, Enhancement 1 - RSQL Search
+    public List<TradeDTO> searchTradesRsql(String query) {
+    Specification<Trade> spec = RsqlSpecificationBuilder.build(query);
+    return tradeRepository.findAll(spec).stream()
+            .map(tradeMapper::toDto)
+            .toList();
+}
+
 
     @Transactional
     public Trade createTrade(TradeDTO tradeDTO) {
