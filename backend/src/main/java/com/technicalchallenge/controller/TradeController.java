@@ -5,6 +5,7 @@ import com.technicalchallenge.mapper.TradeMapper;
 import com.technicalchallenge.model.Trade;
 import com.technicalchallenge.service.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -71,6 +74,63 @@ public class TradeController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    //Ehnancement 1 - Advanced Search with Multiple Criteria
+    @GetMapping("/search")
+    @Operation(
+        summary = "Search trades by multiple criteria",
+        description = "Allows filtering trades by counterparty, book, trader, status, and optional date range"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Trades successfully retrieved",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = TradeDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid search criteria format"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public List<TradeDTO> searchTrades(
+            @Parameter(description = "Counterparty name") @RequestParam(required = false) String counterparty,
+            @Parameter(description = "Book ID") @RequestParam(required = false) Long bookId,
+            @Parameter(description = "Trader user name") @RequestParam(required = false) String trader,
+            @Parameter(description = "Trade status") @RequestParam(required = false) String status,
+            @Parameter(description = "Start date filter") @RequestParam(required = false) LocalDate fromDate,
+            @Parameter(description = "End date filter") @RequestParam(required = false) LocalDate toDate
+    ) {
+        logger.info("Searching trades with filters - counterparty: {}, bookId: {}, trader: {}, status: {}, fromDate: {}, toDate: {}",
+                counterparty, bookId, trader, status, fromDate, toDate);
+
+        return tradeService.searchTrades(counterparty, bookId, trader, status, fromDate, toDate, org.springframework.data.domain.PageRequest.of(0, 500))
+                .toList();
+    }
+
+    // paginated version of the search endpoint
+    @GetMapping("/filter")
+    @Operation(
+        summary = "Paginated trade filter search",
+        description = "Same as /search but supports paging for large trade books"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Trades successfully retrieved (paged)",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = TradeDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid paging or filter values"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public Page<TradeDTO> filterTrades(
+            @RequestParam(required = false) String counterparty,
+            @RequestParam(required = false) Long bookId,
+            @RequestParam(required = false) String trader,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) LocalDate fromDate,
+            @RequestParam(required = false) LocalDate toDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "25") int size
+    ) {
+        logger.info("Filtering trades (paged) - page: {}, size: {}", page, size);
+
+        return tradeService.searchTrades(counterparty, bookId, trader, status, fromDate, toDate, org.springframework.data.domain.PageRequest.of(page, size));
+    }
+ 
 
     @PostMapping
     @Operation(summary = "Create new trade",
