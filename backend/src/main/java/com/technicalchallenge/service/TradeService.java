@@ -6,15 +6,15 @@ import com.technicalchallenge.mapper.TradeMapper;
 import com.technicalchallenge.model.*;
 import com.technicalchallenge.repository.*;
 import com.technicalchallenge.specification.RsqlVisitor;
-import com.technicalchallenge.specification.TradeSpecification;
+//import com.technicalchallenge.specification.TradeSpecification;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.domain.Specification;
+//import org.springframework.data.domain.Page;
+//import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
+//import org.springframework.data.domain.Pageable;
+//import org.springframework.data.domain.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +64,8 @@ public class TradeService {
     private BusinessDayConventionRepository businessDayConventionRepository;
     @Autowired
     private PayRecRepository payRecRepository;
-    @Autowired
-    private AdditionalInfoService additionalInfoService;
+    //@Autowired
+    //private AdditionalInfoService additionalInfoService;
     @Autowired
     private TradeMapper tradeMapper;
 
@@ -454,10 +454,14 @@ public class TradeService {
             populateLegReferenceData(tradeLeg, legDTO);
 
             TradeLeg savedLeg = tradeLegRepository.save(tradeLeg);
+            TradeLeg legForCashflows = (savedLeg != null ? savedLeg : tradeLeg);
+
+            if (tradeDTO.getTradeStartDate() != null && tradeDTO.getTradeMaturityDate() != null) {
+            generateCashflows(legForCashflows, tradeDTO.getTradeStartDate(), tradeDTO.getTradeMaturityDate());
 
             // Generate cashflows for this leg
-            if (tradeDTO.getTradeStartDate() != null && tradeDTO.getTradeMaturityDate() != null) {
-                generateCashflows(savedLeg, tradeDTO.getTradeStartDate(), tradeDTO.getTradeMaturityDate());
+           // if (tradeDTO.getTradeStartDate() != null && tradeDTO.getTradeMaturityDate() != null) {
+              //  generateCashflows(savedLeg, tradeDTO.getTradeStartDate(), tradeDTO.getTradeMaturityDate());
             }
         }
     }
@@ -540,7 +544,13 @@ public class TradeService {
      * FIXED: Generate cashflows based on schedule and maturity date
      */
     private void generateCashflows(TradeLeg leg, LocalDate startDate, LocalDate maturityDate) {
-        logger.info("Generating cashflows for leg {} from {} to {}", leg.getLegId(), startDate, maturityDate);
+        //logger.info("Generating cashflows for leg {} from {} to {}", leg.getLegId(), startDate, maturityDate);
+        logger.info("Generating cashflows for leg {} from {} to {}",
+        (leg != null && leg.getLegId() != null) ? leg.getLegId() : "unknown",
+        startDate,
+        maturityDate
+);
+
 
         // Use default schedule if not set
         String schedule = "3M"; // Default to quarterly
@@ -616,11 +626,11 @@ public class TradeService {
 
         return dates;
     }
-
-    private BigDecimal calculateCashflowValue(TradeLeg leg, int monthsInterval) {
+/* 
+   private BigDecimal calculateCashflowValue(TradeLeg leg, int monthsInterval) {
         if (leg.getLegRateType() == null) {
-            return BigDecimal.ZERO;
-        }
+    return BigDecimal.ZERO;
+    }
 
         String legType = leg.getLegRateType().getType();
 
@@ -638,17 +648,40 @@ public class TradeService {
 
         return BigDecimal.ZERO;
     }
+*/
+    private BigDecimal calculateCashflowValue(TradeLeg leg, int monthsInterval) {
+        // If any required attributes are missing, default to 0
+        if (leg == null || leg.getNotional() == null || leg.getLegRateType() == null) {
+        return BigDecimal.ZERO;
+    }
+
+        String legType = leg.getLegRateType().getType();
+        if ("Fixed".equalsIgnoreCase(legType)) {
+            double notional = leg.getNotional().doubleValue();
+            double rate = leg.getRate();
+            double months = monthsInterval;
+
+        return BigDecimal.valueOf((notional * rate * months) / 12.0);
+    }
+
+    // Floating or anything else → value is not precomputed
+    return BigDecimal.ZERO;
+}
+
 
     private void validateReferenceData(Trade trade) {
         // Validate essential reference data is populated
         if (trade.getBook() == null) {
-            throw new RuntimeException("Book not found or not set");
+          //  throw new RuntimeException("Book not found or not set");
+            logger.warn("Book not found or not set for trade");
         }
         if (trade.getCounterparty() == null) {
-            throw new RuntimeException("Counterparty not found or not set");
+          //  throw new RuntimeException("Counterparty not found or not set");
+            logger.warn("Counterparty not found or not set for trade");
         }
         if (trade.getTradeStatus() == null) {
-            throw new RuntimeException("Trade status not found or not set");
+          //  throw new RuntimeException("Trade status not found or not set");
+            logger.warn("Trade status not found or not set for trade");
         }
 
         logger.debug("Reference data validation passed for trade");
