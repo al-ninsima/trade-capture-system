@@ -1,5 +1,11 @@
 package com.technicalchallenge.specification;
 
+public class RsqlSpecification {
+}
+
+/*
+   temporarily disabled RSQL logic — revisit in Enhancement stretch
+
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -59,3 +65,4 @@ public class RsqlSpecification<T> implements Specification<T> {
         return root.get(selector);
     }
 }
+*/

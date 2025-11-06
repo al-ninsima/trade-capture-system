@@ -121,12 +121,14 @@ public class TradeService {
 
     }
     //Stage 3, Enhancement 1 - RSQL Search
+    /* 
     public List<TradeDTO> searchTradesRsql(String query) {
     Specification<Trade> spec = RsqlSpecificationBuilder.build(query);
     return tradeRepository.findAll(spec).stream()
             .map(tradeMapper::toDto)
             .toList();
-}
+} 
+*/
 
 
     @Transactional

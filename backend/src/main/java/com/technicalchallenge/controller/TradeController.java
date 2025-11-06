@@ -130,7 +130,8 @@ public class TradeController {
         return tradeService.searchTrades(counterparty, bookId, trader, status, fromDate, toDate, org.springframework.data.domain.PageRequest.of(page, size));
     }
  
-        
+    // TODO: Re-enable when RSQL support is restored
+/*    
     @GetMapping("/rsql")
     @Operation(summary = "Advanced RSQL trade search",
            description = "Allows power users to search trades using flexible RSQL syntax.")
@@ -145,7 +146,8 @@ public class TradeController {
         logger.info("Executing RSQL trade search: {}", query);
         return tradeService.searchTradesRsql(query);
     }
- 
+ */
+
 
 
     @PostMapping

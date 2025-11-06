@@ -1,5 +1,8 @@
 package com.technicalchallenge.specification;
 
+// TODO: RSQL Visitor temporarily disabled until RSQL-JPA compatibility is resolved.
+/*
+
 import org.springframework.data.jpa.domain.Specification;
 import cz.jirutka.rsql.parser.ast.*;
 
@@ -26,3 +29,5 @@ public class RsqlVisitor<T> implements RSQLVisitor<Specification<T>, Void> {
         return new RsqlSpecification<>(node);
     }
 }
+*/
+public class RsqlVisitor<T> {}
