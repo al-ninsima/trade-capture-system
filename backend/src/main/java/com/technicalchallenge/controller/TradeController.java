@@ -75,6 +75,9 @@ public class TradeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    
+        // TODO: Re-enable when RSQL support is restored
+/*   
     //Ehnancement 1 - Advanced Search with Multiple Criteria
     @GetMapping("/search")
     @Operation(
@@ -103,6 +106,8 @@ public class TradeController {
                 .toList();
     }
 
+    
+    
     // paginated version of the search endpoint
     @GetMapping("/filter")
     @Operation(summary = "Paginated trade filter search",
@@ -130,8 +135,7 @@ public class TradeController {
         return tradeService.searchTrades(counterparty, bookId, trader, status, fromDate, toDate, org.springframework.data.domain.PageRequest.of(page, size));
     }
  
-    // TODO: Re-enable when RSQL support is restored
-/*    
+ 
     @GetMapping("/rsql")
     @Operation(summary = "Advanced RSQL trade search",
            description = "Allows power users to search trades using flexible RSQL syntax.")
@@ -147,6 +151,11 @@ public class TradeController {
         return tradeService.searchTradesRsql(query);
     }
  */
+
+    @GetMapping("/rsql")
+        public List<TradeDTO> searchTradesRsql(@RequestParam String query) {
+        return tradeService.searchTradesRsql(query);
+    }
 
 
 

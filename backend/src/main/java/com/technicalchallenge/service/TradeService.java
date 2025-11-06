@@ -5,7 +5,7 @@ import com.technicalchallenge.dto.TradeLegDTO;
 import com.technicalchallenge.mapper.TradeMapper;
 import com.technicalchallenge.model.*;
 import com.technicalchallenge.repository.*;
-import com.technicalchallenge.specification.RsqlSpecificationBuilder;
+import com.technicalchallenge.specification.RsqlVisitor;
 import com.technicalchallenge.specification.TradeSpecification;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import cz.jirutka.rsql.parser.RSQLParser;
 
 @Service
 @Transactional
@@ -78,8 +80,17 @@ public class TradeService {
         return tradeRepository.findByTradeIdAndActiveTrue(tradeId);
     }
 
-// Update to support Stage 3 Enhancement 1, methods to accept search parameters using Specifications & execute dynamic queries 
+    // new enhancement 1 rsql search
+    public List<TradeDTO> searchTradesRsql(String query) {
+    var rootNode = new RSQLParser().parse(query);
+    var spec = rootNode.accept(new RsqlVisitor<Trade>(), null);
+    return tradeRepository.findAll(spec).stream()
+            .map(tradeMapper::toDto)
+            .toList();
+}
 
+// Update to support Stage 3 Enhancement 1, methods to accept search parameters using Specifications & execute dynamic queries 
+/* 
     public Page<TradeDTO> searchTrades(
         String counterparty,
         Long bookId,
@@ -120,16 +131,7 @@ public class TradeService {
         return trades.map(trade -> tradeMapper.toDto(trade));
 
     }
-    //Stage 3, Enhancement 1 - RSQL Search
-    /* 
-    public List<TradeDTO> searchTradesRsql(String query) {
-    Specification<Trade> spec = RsqlSpecificationBuilder.build(query);
-    return tradeRepository.findAll(spec).stream()
-            .map(tradeMapper::toDto)
-            .toList();
-} 
-*/
-
+        */
 
     @Transactional
     public Trade createTrade(TradeDTO tradeDTO) {
