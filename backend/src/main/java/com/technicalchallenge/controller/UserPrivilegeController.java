@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +35,25 @@ public class UserPrivilegeController {
                 .toList();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserPrivilegeDTO> getUserPrivilegeById(@PathVariable Long id) {
-        logger.debug("Fetching user privilege by id: {}", id);
-        Optional<UserPrivilege> userPrivilege = userPrivilegeService.getUserPrivilegeById(id);
-        return userPrivilege.map(userPrivilegeMapper::toDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+   // @GetMapping("/{id}")
+   // public ResponseEntity<UserPrivilegeDTO> getUserPrivilegeById(@PathVariable Long id) {
+       // logger.debug("Fetching user privilege by id: {}", id);
+       // Optional<UserPrivilege> userPrivilege = userPrivilegeService.getUserPrivilegeById(id);
+       // return userPrivilege.map(userPrivilegeMapper::toDto)
+         //       .map(ResponseEntity::ok)
+           //     .orElseGet(() -> ResponseEntity.notFound().build());
+   // }
+
+   @GetMapping("/{userId}/{privilegeId}")
+    public ResponseEntity<UserPrivilege> getUserPrivilege(
+        @PathVariable Long userId,
+        @PathVariable Long privilegeId) {
+
+    return userPrivilegeService.getUserPrivilegeByUserAndPrivilege(userId, privilegeId)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+}
+
 
     @PostMapping
     public ResponseEntity<UserPrivilegeDTO> createUserPrivilege(@Valid @RequestBody UserPrivilegeDTO userPrivilegeDTO) {
@@ -53,10 +63,20 @@ public class UserPrivilegeController {
                 .body(userPrivilegeMapper.toDto(createdUserPrivilege));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserPrivilege(@PathVariable Long id) {
-        logger.warn("Deleting user privilege with id: {}", id);
-        userPrivilegeService.deleteUserPrivilege(id);
-        return ResponseEntity.noContent().build();
-    }
+   // @DeleteMapping("/{id}")
+   // public ResponseEntity<Void> deleteUserPrivilege(@PathVariable Long id) {
+       // logger.warn("Deleting user privilege with id: {}", id);
+       // userPrivilegeService.deleteUserPrivilege(id);
+       // return ResponseEntity.noContent().build();
+   // }
+
+   @DeleteMapping("/{userId}/{privilegeId}")
+public ResponseEntity<Void> deleteUserPrivilege(
+        @PathVariable Long userId,
+        @PathVariable Long privilegeId) {
+
+    userPrivilegeService.deleteUserPrivilege(userId, privilegeId);
+    return ResponseEntity.noContent().build();
+}
+
 }

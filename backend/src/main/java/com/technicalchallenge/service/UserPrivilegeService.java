@@ -23,18 +23,27 @@ public class UserPrivilegeService {
         return userPrivilegeRepository.findAll();
     }
 
-    public Optional<UserPrivilege> getUserPrivilegeById(Long id) {
-        logger.debug("Retrieving user privilege by id: {}", id);
-        return userPrivilegeRepository.findById(id);
+   // public Optional<UserPrivilege> getUserPrivilegeById(Long id) {
+       // logger.debug("Retrieving user privilege by id: {}", id);
+       // return userPrivilegeRepository.findById(id);
+   // }
+    public Optional<UserPrivilege> getUserPrivilegeByUserAndPrivilege(Long userId, Long privilegeId) {
+        logger.debug("Retrieving privilege for user {} and privilege {}", userId, privilegeId);
+        return userPrivilegeRepository.findByUserIdAndPrivilegeId(userId, privilegeId);
     }
+
 
     public UserPrivilege saveUserPrivilege(UserPrivilege userPrivilege) {
         logger.info("Saving user privilege: {}", userPrivilege);
         return userPrivilegeRepository.save(userPrivilege);
     }
 
-    public void deleteUserPrivilege(Long id) {
-        logger.warn("Deleting user privilege with id: {}", id);
-        userPrivilegeRepository.deleteById(id);
+   // public void deleteUserPrivilege(Long id) {
+        //logger.warn("Deleting user privilege with id: {}", id);
+       // userPrivilegeRepository.deleteById(id);
+   // }
+    public void deleteUserPrivilege(Long userId, Long privilegeId) {
+        logger.warn("Deleting user privilege for user {} with privilege {}", userId, privilegeId);
+        userPrivilegeRepository.deleteByUserIdAndPrivilegeId(userId, privilegeId);
     }
 }
