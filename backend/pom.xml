@@ -70,13 +70,6 @@
             <version>2.1.0</version>
         </dependency>
 
-        <!-- RSQL to JPA Converter
-        <dependency>
-            <groupId>com.github.perplexhub</groupId>
-            <artifactId>rsql-jpa-spring-boot-starter</artifactId>
-            <version>7.2.2</version>
-        </dependency>-->
-
         <!-- ModelMapper for DTO/entity mapping -->
         <dependency>
             <groupId>org.modelmapper</groupId>
