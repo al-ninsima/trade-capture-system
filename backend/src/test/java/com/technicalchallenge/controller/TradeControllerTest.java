@@ -23,6 +23,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -183,8 +184,11 @@ public class TradeControllerTest {
         // Given
         Long tradeId = 1001L;
         tradeDTO.setTradeId(tradeId);
-        when(tradeService.saveTrade(any(Trade.class), any(TradeDTO.class))).thenReturn(trade);
-        doNothing().when(tradeService).populateReferenceDataByName(any(Trade.class), any(TradeDTO.class));
+        //when(tradeService.saveTrade(any(Trade.class), any(TradeDTO.class))).thenReturn(trade); THIS LINE IS NOT NEEDED FOR UPDATE TEST
+        //doNothing().when(tradeService).populateReferenceDataByName(any(Trade.class), any(TradeDTO.class)); THIS LINE IS NOT NEEDED FOR UPDATE TEST
+
+        when(tradeService.amendTrade(eq(tradeId), any(TradeDTO.class))).thenReturn(trade);
+
 
         // When/Then
         mockMvc.perform(put("/api/trades/{id}", tradeId)
@@ -193,7 +197,10 @@ public class TradeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tradeId", is(1001)));
 
-        verify(tradeService).saveTrade(any(Trade.class), any(TradeDTO.class));
+        //verify(tradeService).saveTrade(any(Trade.class), any(TradeDTO.class)); THIS LINE IS NOT NEEDED FOR UPDATE TEST
+
+        verify(tradeService).amendTrade(eq(tradeId), any(TradeDTO.class));
+
     }
 
     @Test
