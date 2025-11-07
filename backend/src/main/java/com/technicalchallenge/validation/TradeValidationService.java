@@ -1,4 +1,4 @@
-package com.technicalchallenge.service;
+package com.technicalchallenge.validation;
 
 import com.technicalchallenge.model.TradeOperation;
 import com.technicalchallenge.model.UserRole;
