@@ -32,6 +32,13 @@ public class TradeValidationService {
     private final CounterpartyRepository counterpartyRepository;
     private final ApplicationUserRepository applicationUserRepository;
 
+    private static final String OP_CREATE = "CREATE";
+    private static final String OP_AMEND = "AMEND";
+    private static final String OP_TERMINATE = "TERMINATE";
+    private static final String OP_CANCEL = "CANCEL";
+    private static final String OP_VIEW = "VIEW";
+
+
     @Autowired
     public TradeValidationService(BookRepository bookRepository,
                                   CounterpartyRepository counterpartyRepository,
