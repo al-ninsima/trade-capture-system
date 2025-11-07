@@ -140,12 +140,40 @@ public ValidationResult validateTrade(TradeDTO tradeDTO) {
 
     return result;
 }
-// Placeholder: Reference Data Validation
-private ValidationResult validateReferenceData(TradeDTO tradeDTO) {
-    ValidationResult result = new ValidationResult();
-    // Actual validation logic will be added later
+public ValidationResult validateReferenceData(TradeDTO tradeDTO) {
+    ValidationResult result = ValidationResult.ok();
+
+    // Validate Book
+    Book book = bookRepository.findByBookNameIgnoreCase(tradeDTO.getBookName())
+            .orElse(null);
+    if (book == null || !book.isActive()) {
+        return ValidationResult.fail("Book is invalid or inactive.");
+    }
+
+    // Validate Counterparty
+    Counterparty counterparty = counterpartyRepository.findByNameIgnoreCase(tradeDTO.getCounterpartyName())
+            .orElse(null);
+    if (counterparty == null || !counterparty.isActive()) {
+        return ValidationResult.fail("Counterparty is invalid or inactive.");
+    }
+
+    // Validate Trader User
+    ApplicationUser trader = applicationUserRepository.findByLoginIdIgnoreCase(tradeDTO.getTraderUserName())
+            .orElse(null);
+    if (trader == null || !trader.isActive()) {
+        return ValidationResult.fail("Trader user is invalid or inactive.");
+    }
+
+    // Validate Inputter User
+    ApplicationUser inputter = applicationUserRepository.findByLoginIdIgnoreCase(tradeDTO.getInputterUserName())
+            .orElse(null);
+    if (inputter == null || !inputter.isActive()) {
+        return ValidationResult.fail("Inputter user is invalid or inactive.");
+    }
+
     return result;
 }
+
 
 // Placeholder: User Permission Validation
 private ValidationResult validateUserPermissions(Long userId, String operation, TradeDTO tradeDTO) {
