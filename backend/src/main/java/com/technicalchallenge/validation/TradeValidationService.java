@@ -3,6 +3,7 @@ package com.technicalchallenge.validation;
 import com.technicalchallenge.dto.TradeDTO;
 import com.technicalchallenge.model.TradeOperation;
 import com.technicalchallenge.model.UserRole;
+import com.technicalchallenge.validation.ValidationResult;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -71,6 +72,43 @@ if (tradeDTO.getTradeDate() != null) {
 }
     
     return ValidationResult.ok();
+}
+
+public ValidationResult validateTradeDates(TradeDTO trade) {
+    ValidationResult result = new ValidationResult();
+
+    // Trade date cannot be more than 30 days old
+    if (trade.getTradeDate() != null) {
+        if (trade.getTradeDate().isBefore(LocalDate.now().minusDays(30))) {
+            result.addError("Trade date cannot be more than 30 days in the past.");
+        }
+    }
+
+    // Start date must be on or after trade date
+    if (trade.getTradeStartDate() != null && trade.getTradeDate() != null) {
+        if (trade.getTradeStartDate().isBefore(trade.getTradeDate())) {
+            result.addError("Trade start date cannot be before trade date.");
+        }
+    }
+
+    // Maturity date must be after start date AND trade date
+    if (trade.getTradeMaturityDate() != null && trade.getTradeStartDate() != null) {
+        if (trade.getTradeMaturityDate().isBefore(trade.getTradeStartDate())) {
+            result.addError("Maturity date cannot be before start date.");
+        }
+    }
+
+    return result;
+}
+public ValidationResult validateTrade(TradeDTO tradeDTO) {
+    ValidationResult result = new ValidationResult();
+
+    result.merge(validateTradeDates(tradeDTO));
+    result.merge(validateReferenceData(tradeDTO));
+    result.merge(validateUserPermissions(tradeDTO.getTraderUserId(), "AMEND", tradeDTO));
+    result.merge(validateLegConsistency(tradeDTO.getTradeLegs()));
+
+    return result;
 }
 
 
