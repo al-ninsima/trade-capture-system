@@ -7,6 +7,8 @@ import com.technicalchallenge.model.*;
 import com.technicalchallenge.repository.*;
 import com.technicalchallenge.specification.RsqlVisitor;
 //import com.technicalchallenge.specification.TradeSpecification;
+import com.technicalchallenge.validation.TradeValidationService;
+import com.technicalchallenge.validation.ValidationResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.domain.Page;
@@ -180,6 +182,10 @@ public class TradeService {
     // NEW METHOD: For controller compatibility
     @Transactional
     public Trade saveTrade(Trade trade, TradeDTO tradeDTO) {
+           ValidationResult validation = tradeValidationService.validateTrade(tradeDTO);
+            if (!validation.isValid()) {
+                throw new IllegalArgumentException(validation.toString());
+            }
         logger.info("Saving trade with ID: {}", trade.getTradeId());
 
         // If this is an existing trade (has ID), handle as amendment
@@ -327,6 +333,8 @@ public class TradeService {
 
     @Transactional
     public Trade amendTrade(Long tradeId, TradeDTO tradeDTO) {
+
+        
         logger.info("Amending trade with ID: {}", tradeId);
 
 
@@ -339,6 +347,11 @@ public class TradeService {
         Trade existingTrade = existingTradeOpt.get();
         logger.debug("Existing trade found: tradeId={}, version={}, active={}",
         existingTrade.getTradeId(), existingTrade.getVersion(), existingTrade.getActive());
+
+         ValidationResult validation = tradeValidationService.validateTrade(tradeDTO);
+            if (!validation.isValid()) {
+            throw new IllegalArgumentException(validation.toString());
+            }
 
         // Deactivate existing trade
         existingTrade.setActive(false);

@@ -1,6 +1,7 @@
 package com.technicalchallenge.validation;
 
 import com.technicalchallenge.dto.TradeDTO;
+import com.technicalchallenge.dto.TradeLegDTO;
 import com.technicalchallenge.model.TradeOperation;
 import com.technicalchallenge.model.UserRole;
 import com.technicalchallenge.validation.ValidationResult;
@@ -8,6 +9,7 @@ import com.technicalchallenge.validation.ValidationResult;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 public class TradeValidationService {
 
@@ -108,6 +110,26 @@ public ValidationResult validateTrade(TradeDTO tradeDTO) {
     result.merge(validateUserPermissions(tradeDTO.getTraderUserId(), "AMEND", tradeDTO));
     result.merge(validateLegConsistency(tradeDTO.getTradeLegs()));
 
+    return result;
+}
+// Placeholder: Reference Data Validation
+private ValidationResult validateReferenceData(TradeDTO tradeDTO) {
+    ValidationResult result = new ValidationResult();
+    // Actual validation logic will be added later
+    return result;
+}
+
+// Placeholder: User Permission Validation
+private ValidationResult validateUserPermissions(Long userId, String operation, TradeDTO tradeDTO) {
+    ValidationResult result = new ValidationResult();
+    // Actual privilege checks will be added later
+    return result;
+}
+
+// Placeholder: Leg Consistency Validation
+private ValidationResult validateLegConsistency(List<TradeLegDTO> legs) {
+    ValidationResult result = new ValidationResult();
+    // Actual leg consistency rules will be added later
     return result;
 }
 

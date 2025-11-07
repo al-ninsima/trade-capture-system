@@ -19,17 +19,22 @@ import com.technicalchallenge.repository.TradeRepository;
 import com.technicalchallenge.repository.TradeStatusRepository;
 import com.technicalchallenge.repository.TradeSubTypeRepository;
 import com.technicalchallenge.repository.TradeTypeRepository;
+import com.technicalchallenge.validation.TradeValidationService;
+import com.technicalchallenge.validation.ValidationResult;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.lenient;
 
-import com.technicalchallenge.model.Book;
+
 import com.technicalchallenge.model.Cashflow;
-import com.technicalchallenge.model.Schedule;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -92,8 +97,12 @@ class TradeServiceTest {
     @Mock
     private AdditionalInfoService additionalInfoService;
 
+    @Mock
+    private TradeValidationService tradeValidationService;
+
     @InjectMocks
     private TradeService tradeService;
+
 
     private TradeDTO tradeDTO;
     private Trade trade;
@@ -120,6 +129,12 @@ class TradeServiceTest {
         trade = new Trade();
         trade.setId(1L);
         trade.setTradeId(100001L);
+
+        MockitoAnnotations.openMocks(this);
+
+       lenient().when(tradeValidationService.validateTrade(any()))
+        .thenReturn(ValidationResult.ok());
+
     }
 
     @Test
