@@ -209,8 +209,8 @@ public class TradeController {
             if (tradeDTO.getTradeId() == null) {
                 tradeDTO.setTradeId(id);
             }
-            
-            Trade amendedTrade = tradeService.amendTrade(id, tradeDTO);
+
+           /*  Trade amendedTrade = tradeService.amendTrade(id, tradeDTO);
             if (amendedTrade == null) {
             logger.error("amendTrade returned null for tradeId {}", id);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -232,7 +232,16 @@ public class TradeController {
         } catch (Exception e) {
             logger.error("Error updating trade with id {}: {}", id, e.getMessage(), e);
     return ResponseEntity.badRequest().body("Error updating trade: " + e.getMessage());
-        }
+        } */
+
+        Trade amended = tradeService.amendTrade(id, tradeDTO);
+        return ResponseEntity.ok(tradeMapper.toDto(amended));
+
+    } catch (Exception e) {
+        logger.error("Error updating trade with id {}: {}", id, e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error updating trade: " + e.getMessage());
+    }
     }
 
     @DeleteMapping("/{id}")
