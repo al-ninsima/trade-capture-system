@@ -182,12 +182,43 @@ public ValidationResult validateReferenceData(TradeDTO tradeDTO) {
 }
 
 
-// Placeholder: User Permission Validation
-private ValidationResult validateUserPermissions(Long userId, String operation, TradeDTO tradeDTO) {
-    ValidationResult result = new ValidationResult();
-    // Actual privilege checks will be added later
-    return result;
+public ValidationResult validateUserPermissions(String userLoginId, String operation) {
+    // Look up user
+    Optional<ApplicationUser> userOpt = applicationUserRepository.findByLoginIdIgnoreCase(userLoginId);
+    if (userOpt.isEmpty()) {
+        return ValidationResult.fail("User " + userLoginId + " does not exist.");
+    }
+
+    ApplicationUser user = userOpt.get();
+    String role = user.getUserProfile().getUserType().toUpperCase();
+
+    switch (role) {
+        case "TRADER":
+            return ValidationResult.ok(); // trader can do everything
+
+        case "SALES":
+            if (operation.equals(OP_CREATE) || operation.equals(OP_AMEND)) {
+                return ValidationResult.ok();
+            }
+            return ValidationResult.fail("SALES users cannot " + operation.toLowerCase() + " trades.");
+
+        case "MIDDLE_OFFICE":
+            if (operation.equals(OP_AMEND) || operation.equals(OP_VIEW)) {
+                return ValidationResult.ok();
+            }
+            return ValidationResult.fail("MIDDLE_OFFICE users cannot " + operation.toLowerCase() + " trades.");
+
+        case "SUPPORT":
+            if (operation.equals(OP_VIEW)) {
+                return ValidationResult.ok();
+            }
+            return ValidationResult.fail("SUPPORT users have view-only access.");
+
+        default:
+            return ValidationResult.fail("Unknown user role: " + role);
+    }
 }
+
 
 // Placeholder: Leg Consistency Validation
 private ValidationResult validateLegConsistency(List<TradeLegDTO> legs) {
