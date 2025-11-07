@@ -4,14 +4,35 @@ import com.technicalchallenge.dto.TradeDTO;
 import com.technicalchallenge.dto.TradeLegDTO;
 import com.technicalchallenge.model.TradeOperation;
 import com.technicalchallenge.model.UserRole;
+import com.technicalchallenge.repository.ApplicationUserRepository;
+import com.technicalchallenge.repository.BookRepository;
+import com.technicalchallenge.repository.CounterpartyRepository;
 import com.technicalchallenge.validation.ValidationResult;
 
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public class TradeValidationService {
+
+    private final BookRepository bookRepository;
+    private final CounterpartyRepository counterpartyRepository;
+    private final ApplicationUserRepository applicationUserRepository;
+
+    @Autowired
+    public TradeValidationService(BookRepository bookRepository,
+                                  CounterpartyRepository counterpartyRepository,
+                                  ApplicationUserRepository applicationUserRepository) {
+        this.bookRepository = bookRepository;
+        this.counterpartyRepository = counterpartyRepository;
+        this.applicationUserRepository = applicationUserRepository;
+    }
 
     // roles that can perform specific trade operations
 private static final Map<UserRole, Set<TradeOperation>> ROLE_PERMISSIONS = Map.of(
@@ -135,3 +156,4 @@ private ValidationResult validateLegConsistency(List<TradeLegDTO> legs) {
 
 
 }
+
