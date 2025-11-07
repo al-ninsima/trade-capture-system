@@ -234,8 +234,19 @@ public class TradeController {
     return ResponseEntity.badRequest().body("Error updating trade: " + e.getMessage());
         } */
 
-        Trade amended = tradeService.amendTrade(id, tradeDTO);
-        return ResponseEntity.ok(tradeMapper.toDto(amended));
+       // Trade amended = tradeService.amendTrade(id, tradeDTO);
+       // return ResponseEntity.ok(tradeMapper.toDto(amended));
+       Trade amended = tradeService.amendTrade(id, tradeDTO);
+
+        TradeDTO responseDTO = tradeMapper.toDto(amended);
+
+    // Ensure tradeId is present in response (required by test)
+        if (responseDTO.getTradeId() == null) {
+            responseDTO.setTradeId(amended.getTradeId());
+    }
+
+        return ResponseEntity.ok(responseDTO);
+
 
     } catch (Exception e) {
         logger.error("Error updating trade with id {}: {}", id, e.getMessage(), e);
