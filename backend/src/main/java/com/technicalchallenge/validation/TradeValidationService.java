@@ -49,6 +49,18 @@ public ValidationResult validateTradeBusinessRules(TradeDTO tradeDTO) {
     }
 }
 
+if (tradeDTO.getTradeMaturityDate() != null && tradeDTO.getTradeStartDate() != null) {
+    if (tradeDTO.getTradeMaturityDate().isBefore(tradeDTO.getTradeStartDate())) {
+        return ValidationResult.fail("Maturity date cannot be before start date");
+    }
+}
+
+if (tradeDTO.getTradeMaturityDate() != null && tradeDTO.getTradeDate() != null) {
+    if (tradeDTO.getTradeMaturityDate().isBefore(tradeDTO.getTradeDate())) {
+        return ValidationResult.fail("Maturity date cannot be before trade date");
+    }
+}
+
     
     return ValidationResult.ok();
 }
