@@ -68,6 +68,8 @@ public class TradeService {
     //private AdditionalInfoService additionalInfoService;
     @Autowired
     private TradeMapper tradeMapper;
+    @Autowired
+    private TradeValidationService tradeValidationService;
 
 
     public List<Trade> getAllTrades() {
