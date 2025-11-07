@@ -1,5 +1,6 @@
 package com.technicalchallenge.validation;
 
+import com.technicalchallenge.dto.TradeDTO;
 import com.technicalchallenge.model.TradeOperation;
 import com.technicalchallenge.model.UserRole;
 import java.util.Map;
@@ -33,6 +34,17 @@ public boolean validateUserPrivileges(UserRole role, TradeOperation operation) {
     Set<TradeOperation> allowed = ROLE_PERMISSIONS.get(role);
 
     return allowed != null && allowed.contains(operation);
+}
+
+public ValidationResult validateTradeBusinessRules(TradeDTO tradeDTO) {
+
+    // 1. Basic presence check
+    if (tradeDTO == null) {
+        return ValidationResult.fail("Trade data cannot be null");
+    }
+
+    
+    return ValidationResult.ok();
 }
 
 
