@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface CounterpartyRepository extends JpaRepository<Counterparty, Long> {
-    Optional<Counterparty> findByName(String name);
+   Optional<Counterparty> findByNameIgnoreCase(String name);
+
 }

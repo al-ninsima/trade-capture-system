@@ -291,10 +291,10 @@ void testCashflowGeneration_MonthlySchedule() {
     when(tradeLegRepository.save(any(TradeLeg.class))).thenAnswer(i -> i.getArgument(0));
     when(cashflowRepository.save(any(Cashflow.class))).thenAnswer(i -> i.getArgument(0));
 
-    when(bookRepository.findByBookName(anyString()))
+    when(bookRepository.findByBookNameIgnoreCase(anyString()))
     .thenReturn(Optional.of(new com.technicalchallenge.model.Book()));
 
-    when(counterpartyRepository.findByName(anyString()))
+    when(counterpartyRepository.findByNameIgnoreCase(anyString()))
     .thenReturn(Optional.of(new com.technicalchallenge.model.Counterparty()));
 
     when(tradeStatusRepository.findByTradeStatus(anyString()))

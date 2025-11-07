@@ -202,7 +202,7 @@ public class TradeService {
 
         // Populate Book
         if (tradeDTO.getBookName() != null) {
-            bookRepository.findByBookName(tradeDTO.getBookName())
+            bookRepository.findByBookNameIgnoreCase(tradeDTO.getBookName())
                     .ifPresent(trade::setBook);
         } else if (tradeDTO.getBookId() != null) {
             bookRepository.findById(tradeDTO.getBookId())
@@ -211,7 +211,7 @@ public class TradeService {
 
         // Populate Counterparty
         if (tradeDTO.getCounterpartyName() != null) {
-            counterpartyRepository.findByName(tradeDTO.getCounterpartyName())
+            counterpartyRepository.findByNameIgnoreCase(tradeDTO.getCounterpartyName())
                     .ifPresent(trade::setCounterparty);
         } else if (tradeDTO.getCounterpartyId() != null) {
             counterpartyRepository.findById(tradeDTO.getCounterpartyId())
@@ -247,7 +247,7 @@ public class TradeService {
                 } else {
                     logger.warn("Trader user not found with firstName: {}", firstName);
                     // Try with loginId as fallback
-                    Optional<ApplicationUser> byLoginId = applicationUserRepository.findByLoginId(tradeDTO.getTraderUserName().toLowerCase());
+                    Optional<ApplicationUser> byLoginId = applicationUserRepository.findByLoginIdIgnoreCase(tradeDTO.getTraderUserName().toLowerCase());
                     if (byLoginId.isPresent()) {
                         trade.setTraderUser(byLoginId.get());
                         logger.debug("Found trader user by loginId: {}", tradeDTO.getTraderUserName());
@@ -275,7 +275,7 @@ public class TradeService {
                 } else {
                     logger.warn("Inputter user not found with firstName: {}", firstName);
                     // Try with loginId as fallback
-                    Optional<ApplicationUser> byLoginId = applicationUserRepository.findByLoginId(tradeDTO.getInputterUserName().toLowerCase());
+                    Optional<ApplicationUser> byLoginId = applicationUserRepository.findByLoginIdIgnoreCase(tradeDTO.getInputterUserName().toLowerCase());
                     if (byLoginId.isPresent()) {
                         trade.setTradeInputterUser(byLoginId.get());
                         logger.debug("Found inputter user by loginId: {}", tradeDTO.getInputterUserName());
