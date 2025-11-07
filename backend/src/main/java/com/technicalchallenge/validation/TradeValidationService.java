@@ -3,6 +3,8 @@ package com.technicalchallenge.validation;
 import com.technicalchallenge.dto.TradeDTO;
 import com.technicalchallenge.model.TradeOperation;
 import com.technicalchallenge.model.UserRole;
+
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +63,12 @@ if (tradeDTO.getTradeMaturityDate() != null && tradeDTO.getTradeDate() != null) 
     }
 }
 
+if (tradeDTO.getTradeDate() != null) {
+    LocalDate limit = LocalDate.now().minusDays(30);
+    if (tradeDTO.getTradeDate().isBefore(limit)) {
+        return ValidationResult.fail("Trade date cannot be more than 30 days in the past");
+    }
+}
     
     return ValidationResult.ok();
 }
