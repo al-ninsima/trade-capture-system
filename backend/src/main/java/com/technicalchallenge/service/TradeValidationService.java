@@ -29,6 +29,11 @@ private static final Map<UserRole, Set<TradeOperation>> ROLE_PERMISSIONS = Map.o
                 TradeOperation.VIEW
         )
 );
+public boolean validateUserPrivileges(UserRole role, TradeOperation operation) {
+    Set<TradeOperation> allowed = ROLE_PERMISSIONS.get(role);
+
+    return allowed != null && allowed.contains(operation);
+}
 
 
 }
