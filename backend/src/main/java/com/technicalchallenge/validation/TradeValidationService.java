@@ -43,6 +43,12 @@ public ValidationResult validateTradeBusinessRules(TradeDTO tradeDTO) {
         return ValidationResult.fail("Trade data cannot be null");
     }
 
+    if (tradeDTO.getTradeStartDate() != null && tradeDTO.getTradeDate() != null) {
+    if (tradeDTO.getTradeStartDate().isBefore(tradeDTO.getTradeDate())) {
+        return ValidationResult.fail("Start date cannot be before trade date");
+    }
+}
+
     
     return ValidationResult.ok();
 }
