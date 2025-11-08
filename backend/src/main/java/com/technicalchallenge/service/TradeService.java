@@ -182,6 +182,17 @@ public class TradeService {
     // NEW METHOD: For controller compatibility
     @Transactional
     public Trade saveTrade(Trade trade, TradeDTO tradeDTO) {
+
+        ValidationResult permissionCheck = tradeValidationService.validateUserPermissions(
+        tradeDTO.getTradeInputterUserId(),
+        "AMEND",
+        tradeDTO
+    );
+
+if (!permissionCheck.isValid()) {
+    throw new RuntimeException(permissionCheck.getMessage());
+}
+    
            ValidationResult validation = tradeValidationService.validateTrade(tradeDTO);
             if (!validation.isValid()) {
                 throw new IllegalArgumentException(validation.toString());
@@ -334,7 +345,13 @@ public class TradeService {
     @Transactional
     public Trade amendTrade(Long tradeId, TradeDTO tradeDTO) {
 
-        
+            ValidationResult permissionCheck = tradeValidationService.validateUserPermissions(
+            tradeDTO.getInputterUserName(),
+            "AMEND"
+            );
+            if (!permissionCheck.isValid()) {
+                throw new RuntimeException(permissionCheck.getMessage());
+            }
         logger.info("Amending trade with ID: {}", tradeId);
 
 
@@ -736,3 +753,4 @@ public class TradeService {
         return 10000L + tradeRepository.count();
     }
 }
+//current file

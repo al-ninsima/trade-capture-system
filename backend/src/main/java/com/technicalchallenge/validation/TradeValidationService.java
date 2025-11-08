@@ -19,6 +19,7 @@ import com.technicalchallenge.model.ApplicationUser;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
